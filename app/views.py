@@ -22,15 +22,17 @@ def about():
 def contact():
     """Render the website's contact page"""
     form = ContactForm()
-    if form.validate_on_submit():
-        name = request.form['name']
-        email = request.form['email']
-        subject = request.form['subject']
-        message = request.form['message']
-        msg = Message(subject, sender=email, recipients=[app.config['MAIL_ DEFAULT_SENDER']])
-        msg.body = f"From: {name} <{email}> \n\n {message}"
-        mail.send(msg)
-        return redirect('/')
+    if request.method == 'POST':
+        if form.validate_on_submit():
+            name = request.form['name']
+            email = request.form['email']
+            subject = request.form['subject']
+            message = request.form['message']
+            msg = Message(subject, sender=email, recipients=[app.config['MAIL_DEFAULT_SENDER']])
+            msg.body = f"From: {name} <{email}> \n\n {message}"
+            mail.send(msg)
+            flash('The message has been sent')
+            return redirect('/')
     return render_template('contact.html', form=form)
 
 ###
